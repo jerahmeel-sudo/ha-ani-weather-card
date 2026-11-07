@@ -1,3 +1,5 @@
+> **Personal copy.** This repository is a private-maintenance copy of [alexsto1an/ha-ani-weather-card](https://github.com/alexsto1an/ha-ani-weather-card) by alexsto1an, taken at v1.2.0 under the MIT licence. All credit for the card goes to the original author. It is not the official project, and it does not take automatic updates from it. Links further down this page still point to the original project.
+
 ![The Animated Weather Card icon: the sky, the sun and the rain behind a pane of glass](docs/images/icon.webp)
 
 # Animated Weather Card
