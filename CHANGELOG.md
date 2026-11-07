@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-07
+
+### Changed
+
+- Partly cloudy and cloudy skies now look different: a few small, light clouds drifting by, or a fuller, bigger, slower layer.
+
+### Fixed
+
+- Cloudy skies were treated as partly cloudy, so both drew the same clouds.
+
 ## [1.2.0] - 2026-11-06
 
 ### Added

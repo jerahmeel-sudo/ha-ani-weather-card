@@ -115,7 +115,7 @@ export class ModularIntegrationBridge {
                     animation = new CloudsAnimation(this.element, {
                         ...baseConfig,
                         cloudCount: Math.max(1, Math.floor(intensity * 2)),
-                        isPartlyCloudy: intensity < 3,
+                        isPartlyCloudy: intensity < 1,
                     }, this.config, this.realWindSpeed);
                     break;
 

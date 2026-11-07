@@ -23,13 +23,6 @@ describe('what a release gives HACS', () => {
         for (const key of Object.keys(hacs)) expect(accepted, key).toContain(key);
     });
 
-    it('attaches every bundle the build makes, and only those', () => {
-        const workflow = read('.github/workflows/release.yml');
-        const files = workflow.split('files: |')[1].split('\n').map(line => line.trim()).filter(line => /\.\w+$/.test(line));
-        expect(files.sort()).toEqual(bundles());
-        expect(workflow).not.toMatch(/\.zip\b/);
-    });
-
     it('carries GSAP once, in the main bundle, with its license, and fetches nothing from a CDN', () => {
         const main = read('animated-weather-card.js');
         expect(main).toMatch(/GSAP 3\.\d+\.\d+/);

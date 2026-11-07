@@ -3,7 +3,7 @@
 import { BaseAnimation, BaseAnimationConfig, AnimationLifecycleState } from './base-animation';
 import { AnimatedWeatherCardConfig, GSAPTimeline } from './types';
 import { getWeatherSettings, devLog } from './utils';
-import { createGSAPCloud, driftWindFactor, removeClouds } from './gsap-effects';
+import { CLOUD_MOODS, createGSAPCloud, driftWindFactor, removeClouds } from './gsap-effects';
 import { SKY_DISSOLVE_SEC } from './sky';
 
 export interface CloudsAnimationConfig extends BaseAnimationConfig {
@@ -55,12 +55,10 @@ export class CloudsAnimation extends BaseAnimation {
         removeClouds(cloudLayer);
 
         // Calculate cloud count
-        let cloudCount = Math.min(6, Math.max(1, Math.round(settings.cloudCount)));
-        if (this.cloudsConfig.isPartlyCloudy) {
-            cloudCount = Math.max(1, Math.round(cloudCount * 0.6));
-        }
+        const mood = this.cloudsConfig.isPartlyCloudy ? CLOUD_MOODS.partly : CLOUD_MOODS.overcast;
+        const cloudCount = Math.min(6, Math.max(1, Math.round(settings.cloudCount * mood.count)));
 
-        this.cloudTimelines = createGSAPCloud(cloudLayer, settings, cloudCount, card, this.cardConfig);
+        this.cloudTimelines = createGSAPCloud(cloudLayer, settings, cloudCount, card, this.cardConfig, mood);
         this.startWindFactor = driftWindFactor(settings.windSpeed);
 
         devLog(this.config.devMode, `Clouds animation started with ${cloudCount} clouds`);

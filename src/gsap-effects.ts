@@ -138,6 +138,18 @@ export const CLOUD_LAYERS = [
 ] as const;
 
 /**
+ * How a sky's clouds differ: a few small, light ones drifting by on a partly
+ * cloudy day, or a fuller, bigger, slower layer when it's overcast.
+ */
+export const CLOUD_MOODS = {
+    even: { count: 1, size: 1, speed: 1, opacity: 1 },
+    partly: { count: 0.7, size: 0.85, speed: 1.15, opacity: 0.85 },
+    overcast: { count: 1.7, size: 1.3, speed: 0.65, opacity: 1.2 },
+} as const;
+
+export type CloudMood = { count: number; size: number; speed: number; opacity: number };
+
+/**
  * How much wind speeds drifting things up (clouds, leaves, swooshes): 1 at
  * the default wind effect and 10 km/h, growing with the square root so a
  * gale doesn't make them race.
@@ -250,7 +262,7 @@ export function cloudHeightScale(cardHeight: number): number {
 /**
  * Create GSAP-animated cloud with parallax layers
  */
-export function createGSAPCloud(cloudLayer: Element, settings: any, cloudCount: number, cardElement: HTMLElement, config: any): GSAPTimeline[] {
+export function createGSAPCloud(cloudLayer: Element, settings: any, cloudCount: number, cardElement: HTMLElement, config: any, mood: CloudMood = CLOUD_MOODS.even): GSAPTimeline[] {
     // Get card dimensions
     const cardWidth = cardElement.offsetWidth;
     const cardHeight = cardElement.offsetHeight;
@@ -281,11 +293,12 @@ export function createGSAPCloud(cloudLayer: Element, settings: any, cloudCount: 
             // Calculate cloud size with parallax depth
             const baseCloudSize = settings.cloudBaseSize * layer.scale;
             const sizeVariation = 1 + ((i - 1) * 0.15);
-            const actualSize = Math.max(0.3, Math.min(2.5, baseCloudSize)) * sizeVariation * heightScale;
+            const actualSize = Math.max(0.3, Math.min(2.5, baseCloudSize)) * sizeVariation * heightScale * mood.size;
             const shape = cloudShape(actualSize);
 
             cloud.style.position = 'absolute';
-            cloud.style.opacity = layer.opacity.toString();
+            const opacity = Math.min(0.85, layer.opacity * mood.opacity);
+            cloud.style.opacity = opacity.toString();
             cloud.style.zIndex = (10 + layerIndex).toString();
 
             // Far clouds are dimmer and cooler, near clouds brightest. The
@@ -357,7 +370,7 @@ export function createGSAPCloud(cloudLayer: Element, settings: any, cloudCount: 
             
             // Start and end fully outside the card, by this much
             const margin = Math.max(150 + layerIndex * 50, extent + CLOUD_BLUR_PAD_PX);
-            const speed = layer.speed * windFactor * (0.9 + Math.random() * 0.2);
+            const speed = layer.speed * mood.speed * windFactor * (0.9 + Math.random() * 0.2);
             const duration = (cardWidth + 2 * margin) / speed;
 
             // The cloud rides a track as wide as the sky. The track's
@@ -368,7 +381,7 @@ export function createGSAPCloud(cloudLayer: Element, settings: any, cloudCount: 
             const track = document.createElement('div');
             track.className = 'cloud-track';
             track.appendChild(cloud);
-            window.AnimatedWeatherCardGsap.set(cloud, { opacity: layer.opacity });
+            window.AnimatedWeatherCardGsap.set(cloud, { opacity });
             window.AnimatedWeatherCardGsap.set(track, {
                 xPercent: 0,
                 x: -margin,
